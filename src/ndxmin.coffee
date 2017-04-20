@@ -16,6 +16,7 @@ module.exports = (grunt) ->
     done = @async()
     options = @options
       dir: process.cwd()
+    console.log 'heeeeeeeeey'
     console.log options.dir, options.dest, options.base
     destDir = path.join(options.dir, (if options.dest then options.dest else options.base))
     if not fs.existsSync destDir
@@ -56,7 +57,7 @@ module.exports = (grunt) ->
             elem: s
             src: src
           next = $(s).next()[0]
-          if not next or (next and next.name isnt 'script')
+          if not next or (next and (next.name isnt 'script' or next.attribs['ndx-ignore']))
             blocks.push block
             block = []
         for l in $('link[rel="stylesheet"]')

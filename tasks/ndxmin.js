@@ -18,6 +18,7 @@
       options = this.options({
         dir: process.cwd()
       });
+      console.log('heeeeeeeeey');
       console.log(options.dir, options.dest, options.base);
       destDir = path.join(options.dir, (options.dest ? options.dest : options.base));
       if (!fs.existsSync(destDir)) {
@@ -69,7 +70,7 @@
               src: src
             });
             next = $(s).next()[0];
-            if (!next || (next && next.name !== 'script')) {
+            if (!next || (next && (next.name !== 'script' || next.attribs['ndx-ignore']))) {
               blocks.push(block);
               block = [];
             }
