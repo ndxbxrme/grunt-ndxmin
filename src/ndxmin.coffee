@@ -86,7 +86,9 @@ module.exports = (grunt) ->
               outPath = path.join destDir, 'app', outName
               if block.type is 'script'
                 txt = ngmin.annotate txt
-                txt = txt.replace /\/\/# sourceMappingURL=.*?\.map/, ''
+                len = txt.length
+                txt = txt.replace /\/\/# sourceMappingURL=.*?\.map/gi, ''
+                console.log 'replaced', len, txt.length
                 #result = uglify.minify txt,
                 #  fromString: true
                 result =

@@ -18,8 +18,6 @@
       options = this.options({
         dir: process.cwd()
       });
-      console.log('heeeeeeeeey');
-      console.log(options.dir, options.dest, options.base);
       destDir = path.join(options.dir, (options.dest ? options.dest : options.base));
       if (!fs.existsSync(destDir)) {
         fs.mkdirSync(destDir);
@@ -53,7 +51,7 @@
         }
       };
       return async.eachSeries(this.data.html, function(file, fileCallback) {
-        var $, block, blocks, filePath, html, i, j, l, len, len1, next, ref, ref1, s, src;
+        var $, block, blocks, filePath, html, i, j, l, len1, len2, next, ref, ref1, s, src;
         filePath = path.join(options.dir, file);
         if (fs.existsSync(filePath)) {
           blocks = [];
@@ -61,7 +59,7 @@
           html = fs.readFileSync(filePath, 'utf8');
           $ = cheerio.load(html);
           ref = $('script');
-          for (i = 0, len = ref.length; i < len; i++) {
+          for (i = 0, len1 = ref.length; i < len1; i++) {
             s = ref[i];
             src = $(s).attr('src');
             block.type = 'script';
@@ -76,7 +74,7 @@
             }
           }
           ref1 = $('link[rel="stylesheet"]');
-          for (j = 0, len1 = ref1.length; j < len1; j++) {
+          for (j = 0, len2 = ref1.length; j < len2; j++) {
             l = ref1[j];
             src = $(l).attr('href');
             block.type = 'link';
@@ -107,12 +105,15 @@
                 return scriptCallback();
               });
             }, function() {
-              var outName, outPath, result;
+              var len, outName, outPath, result;
               if (txt.length) {
                 outName = 'ndx.' + adler32.str(txt).toString().replace('-', 'm') + (block.type === 'script' ? '.js' : '.css');
                 outPath = path.join(destDir, 'app', outName);
                 if (block.type === 'script') {
                   txt = ngmin.annotate(txt);
+                  len = txt.length;
+                  txt = txt.replace(/\/\/# sourceMappingURL=.*?\.map/gi, '');
+                  console.log('replaced', len, txt.length);
                   result = {
                     code: txt
                   };
