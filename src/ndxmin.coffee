@@ -16,8 +16,6 @@ module.exports = (grunt) ->
     done = @async()
     options = @options
       dir: process.cwd()
-    console.log 'heeeeeeeeey'
-    console.log options.dir, options.dest, options.base
     destDir = path.join(options.dir, (if options.dest then options.dest else options.base))
     if not fs.existsSync destDir
       fs.mkdirSync destDir
@@ -88,6 +86,7 @@ module.exports = (grunt) ->
               outPath = path.join destDir, 'app', outName
               if block.type is 'script'
                 txt = ngmin.annotate txt
+                txt = txt.replace /\/\/# sourceMappingURL=.*?\.map/, ''
                 #result = uglify.minify txt,
                 #  fromString: true
                 result =
