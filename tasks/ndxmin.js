@@ -110,7 +110,6 @@
                 outName = 'ndx.' + adler32.str(txt).toString().replace('-', 'm') + (block.type === 'script' ? '.js' : '.css');
                 outPath = path.join(destDir, 'app', outName);
                 if (block.type === 'script') {
-                  txt = ngmin.annotate(txt);
                   len = txt.length;
                   txt = txt.replace(/\/\/# sourceMappingURL=.*?\.map/gi, '');
                   console.log('replaced', len, txt.length);
@@ -131,7 +130,7 @@
             });
           }, function() {
             var outhtml, r;
-            outhtml = minify($.html());
+            outhtml = $.html();
             r = new RegExp('^[\/]*' + (options.base || ''));
             file = file.replace(r, '');
             fs.writeFileSync(path.join(destDir, file), outhtml, 'utf8');
