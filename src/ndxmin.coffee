@@ -98,7 +98,7 @@ module.exports = (grunt) ->
                         browsers: ["last 2 versions", "ie >= 7"]
                       modules: false
                     ]]
-                    plugins: ['angularjs-annotate']
+                    plugins: ['angularjs-annotate', 'groundskeeper-willie']
                   txt = result.code
                 if options.uglify
                   console.log 'uglifying'
