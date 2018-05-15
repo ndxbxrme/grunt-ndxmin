@@ -13,7 +13,9 @@ module.exports = (grunt) ->
   path = require 'path'
   fs = require 'fs'
   babel = require 'babel-core'
+  console.log 'hello'
   grunt.registerMultiTask 'ndxmin', 'Minify stuff', ->
+    console.log 'started'
     done = @async()
     options = @options
       dir: process.cwd()
@@ -43,6 +45,7 @@ module.exports = (grunt) ->
         else
           callback true, ''
     async.eachSeries @data.html, (file, fileCallback) ->
+      console.log 'options', options
       filePath = path.join(options.dir, file)
       if fs.existsSync filePath
         blocks = []
@@ -86,17 +89,19 @@ module.exports = (grunt) ->
               outName = 'ndx.' + adler32.str(txt).toString().replace('-', 'm') + (if block.type is 'script' then '.js' else '.css')
               outPath = path.join destDir, 'app', outName
               if block.type is 'script'
+                console.log 'got script'
                 len = txt.length
                 #if options.uglify or options.babel
-                #  txt = ngmin.annotate txt
+                #  
                 txt = txt.replace /\/\/# sourceMappingURL=.*?\.map/gi, ''
                 if options.babel
                   console.log 'babeling'
                   options.babel.presets = ['es2015']
-                  options.babel.plugins = ['angularjs-annotate']
                   result = babel.transform txt, options.babel
                   txt = result.code
                 if options.uglify
+                  console.log 'annotating'
+                  txt = ngmin.annotate txt
                   console.log 'uglifying'
                   options.uglify.fromString = true
                   result = uglify.minify txt, options.uglify
