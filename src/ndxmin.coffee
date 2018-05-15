@@ -8,7 +8,6 @@ module.exports = (grunt) ->
   cssmin = require 'cssmin'
   minify = require 'html-minifier'
   .minify
-  ngmin = require 'ngmin'
   curl = require 'curl'
   path = require 'path'
   fs = require 'fs'
