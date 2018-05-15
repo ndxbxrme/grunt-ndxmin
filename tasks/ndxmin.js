@@ -125,7 +125,7 @@
                           }
                         ]
                       ],
-                      plugins: ['angularjs-annotate']
+                      plugins: ['angularjs-annotate', 'groundskeeper-willie']
                     });
                     txt = result.code;
                   }
