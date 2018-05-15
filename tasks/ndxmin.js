@@ -119,19 +119,23 @@
                   txt = txt.replace(/\/\/# sourceMappingURL=.*?\.map/gi, '');
                   if (options.babel) {
                     console.log('babeling');
-                    options.babel.presets = ['es2015'];
-                    result = babel.transform(txt, options.babel);
+                    result = babel.transform(txt, {
+                      presets: ['node_modules/babel-preset-env']
+                    });
                     txt = result.code;
                   }
-                  if (options.uglify) {
-                    console.log('annotating');
-                    txt = ngmin.annotate(txt);
-                    console.log('uglifying');
-                    options.uglify.fromString = true;
-                    result = uglify.minify(txt, options.uglify);
-                    txt = result.code;
-                  }
-                  console.log('replaced', len, txt.length);
+
+                  /*
+                  fs.writeFileSync 'babeled.js', txt, 'utf-8'
+                  if options.uglify
+                    console.log 'annotating'
+                    txt = ngmin.annotate txt
+                    console.log 'uglifying'
+                    options.uglify.fromString = true
+                    result = uglify.minify txt, options.uglify
+                    txt = result.code
+                  console.log 'replaced', len, txt.length
+                   */
                   if (placeholder) {
                     $('placeholder').replaceWith($('<script src="app/' + outName + '"></script>'));
                   }

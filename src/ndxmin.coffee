@@ -88,7 +88,7 @@ module.exports = (grunt) ->
             if txt.length
               outName = 'ndx.' + adler32.str(txt).toString().replace('-', 'm') + (if block.type is 'script' then '.js' else '.css')
               outPath = path.join destDir, 'app', outName
-              if block.type is 'script'
+              if block.type is 'script' 
                 console.log 'got script'
                 len = txt.length
                 #if options.uglify or options.babel
@@ -96,9 +96,11 @@ module.exports = (grunt) ->
                 txt = txt.replace /\/\/# sourceMappingURL=.*?\.map/gi, ''
                 if options.babel
                   console.log 'babeling'
-                  options.babel.presets = ['es2015']
-                  result = babel.transform txt, options.babel
+                  result = babel.transform txt,
+                    presets: ['node_modules/babel-preset-env']
                   txt = result.code
+                ###
+                fs.writeFileSync 'babeled.js', txt, 'utf-8'
                 if options.uglify
                   console.log 'annotating'
                   txt = ngmin.annotate txt
@@ -107,6 +109,7 @@ module.exports = (grunt) ->
                   result = uglify.minify txt, options.uglify
                   txt = result.code
                 console.log 'replaced', len, txt.length
+                ###
                 if placeholder
                   $('placeholder').replaceWith($('<script src="app/' + outName + '"></script>'))
                 fs.writeFileSync outPath, txt, 'utf8'
