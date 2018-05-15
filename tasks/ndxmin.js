@@ -1,14 +1,13 @@
 (function() {
   'use strict';
   module.exports = function(grunt) {
-    var adler32, async, babel, cheerio, cssmin, curl, fs, minify, ngmin, path, uglify;
+    var adler32, async, babel, cheerio, cssmin, curl, fs, minify, path, uglify;
     async = require('async');
     cheerio = require('cheerio');
     adler32 = require('adler-32');
     uglify = require('uglify-js');
     cssmin = require('cssmin');
     minify = require('html-minifier').minify;
-    ngmin = require('ngmin');
     curl = require('curl');
     path = require('path');
     fs = require('fs');
@@ -116,7 +115,17 @@
                   if (options.babel) {
                     console.log('babeling');
                     result = babel.transform(txt, {
-                      plugins: ['transform-es2015-template-literals', 'angularjs-annotate']
+                      presets: [
+                        [
+                          'env', {
+                            targets: {
+                              browsers: ["last 2 versions", "ie >= 7"]
+                            },
+                            modules: false
+                          }
+                        ]
+                      ],
+                      plugins: ['angularjs-annotate']
                     });
                     txt = result.code;
                   }

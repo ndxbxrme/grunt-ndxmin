@@ -92,7 +92,13 @@ module.exports = (grunt) ->
                 if options.babel
                   console.log 'babeling'
                   result = babel.transform txt,
-                    plugins: ['transform-es2015-template-literals', 'angularjs-annotate']
+                    presets: [[
+                      'env',
+                      targets:
+                        browsers: ["last 2 versions", "ie >= 7"]
+                      modules: false
+                    ]]
+                    plugins: ['angularjs-annotate']
                   txt = result.code
                 if options.uglify
                   console.log 'uglifying'
