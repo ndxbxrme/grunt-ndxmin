@@ -12,6 +12,7 @@ module.exports = (grunt) ->
   curl = require 'curl'
   path = require 'path'
   fs = require 'fs'
+  babel = require 'babel-core'
   grunt.registerMultiTask 'ndxmin', 'Minify stuff', ->
     done = @async()
     options = @options
@@ -85,17 +86,25 @@ module.exports = (grunt) ->
               outName = 'ndx.' + adler32.str(txt).toString().replace('-', 'm') + (if block.type is 'script' then '.js' else '.css')
               outPath = path.join destDir, 'app', outName
               if block.type is 'script'
-                txt = ngmin.annotate txt
                 len = txt.length
+                #if options.uglify or options.babel
+                #  txt = ngmin.annotate txt
                 txt = txt.replace /\/\/# sourceMappingURL=.*?\.map/gi, ''
+                if options.babel
+                  console.log 'babeling'
+                  options.babel.presets = ['es2015']
+                  options.babel.plugins = ['angularjs-annotate']
+                  result = babel.transform txt, options.babel
+                  txt = result.code
+                if options.uglify
+                  console.log 'uglifying'
+                  options.uglify.fromString = true
+                  result = uglify.minify txt, options.uglify
+                  txt = result.code
                 console.log 'replaced', len, txt.length
-                result = uglify.minify txt,
-                  fromString: true
-                #result =
-                #  code: txt
                 if placeholder
                   $('placeholder').replaceWith($('<script src="app/' + outName + '"></script>'))
-                fs.writeFileSync outPath, result.code, 'utf8'
+                fs.writeFileSync outPath, txt, 'utf8'
               else if block.type is 'link'
                 result = cssmin txt
                 $('placeholder').replaceWith($('<link rel="stylesheet" href="app/' + outName + '" />'))

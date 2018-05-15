@@ -1,7 +1,7 @@
 (function() {
   'use strict';
   module.exports = function(grunt) {
-    var adler32, async, cheerio, cssmin, curl, fs, minify, ngmin, path, uglify;
+    var adler32, async, babel, cheerio, cssmin, curl, fs, minify, ngmin, path, uglify;
     async = require('async');
     cheerio = require('cheerio');
     adler32 = require('adler-32');
@@ -12,6 +12,7 @@
     curl = require('curl');
     path = require('path');
     fs = require('fs');
+    babel = require('babel-core');
     return grunt.registerMultiTask('ndxmin', 'Minify stuff', function() {
       var destDir, done, options, readFile;
       done = this.async();
@@ -110,17 +111,26 @@
                 outName = 'ndx.' + adler32.str(txt).toString().replace('-', 'm') + (block.type === 'script' ? '.js' : '.css');
                 outPath = path.join(destDir, 'app', outName);
                 if (block.type === 'script') {
-                  txt = ngmin.annotate(txt);
                   len = txt.length;
                   txt = txt.replace(/\/\/# sourceMappingURL=.*?\.map/gi, '');
+                  if (options.babel) {
+                    console.log('babeling');
+                    options.babel.presets = ['es2015'];
+                    options.babel.plugins = ['angularjs-annotate'];
+                    result = babel.transform(txt, options.babel);
+                    txt = result.code;
+                  }
+                  if (options.uglify) {
+                    console.log('uglifying');
+                    options.uglify.fromString = true;
+                    result = uglify.minify(txt, options.uglify);
+                    txt = result.code;
+                  }
                   console.log('replaced', len, txt.length);
-                  result = uglify.minify(txt, {
-                    fromString: true
-                  });
                   if (placeholder) {
                     $('placeholder').replaceWith($('<script src="app/' + outName + '"></script>'));
                   }
-                  fs.writeFileSync(outPath, result.code, 'utf8');
+                  fs.writeFileSync(outPath, txt, 'utf8');
                 } else if (block.type === 'link') {
                   result = cssmin(txt);
                   $('placeholder').replaceWith($('<link rel="stylesheet" href="app/' + outName + '" />'));
