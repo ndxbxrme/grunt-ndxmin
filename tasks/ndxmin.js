@@ -13,10 +13,8 @@
     path = require('path');
     fs = require('fs');
     babel = require('babel-core');
-    console.log('hello');
     return grunt.registerMultiTask('ndxmin', 'Minify stuff', function() {
       var destDir, done, options, readFile;
-      console.log('started');
       done = this.async();
       options = this.options({
         dir: process.cwd()
@@ -55,7 +53,6 @@
       };
       return async.eachSeries(this.data.html, function(file, fileCallback) {
         var $, block, blocks, filePath, html, i, j, l, len1, len2, next, ref, ref1, s, src;
-        console.log('options', options);
         filePath = path.join(options.dir, file);
         if (fs.existsSync(filePath)) {
           blocks = [];
@@ -114,28 +111,21 @@
                 outName = 'ndx.' + adler32.str(txt).toString().replace('-', 'm') + (block.type === 'script' ? '.js' : '.css');
                 outPath = path.join(destDir, 'app', outName);
                 if (block.type === 'script') {
-                  console.log('got script');
                   len = txt.length;
                   txt = txt.replace(/\/\/# sourceMappingURL=.*?\.map/gi, '');
                   if (options.babel) {
                     console.log('babeling');
                     result = babel.transform(txt, {
-                      presets: ['node_modules/babel-preset-env']
+                      plugins: ['transform-es2015-template-literals', 'angularjs-annotate']
                     });
                     txt = result.code;
                   }
-
-                  /*
-                  fs.writeFileSync 'babeled.js', txt, 'utf-8'
-                  if options.uglify
-                    console.log 'annotating'
-                    txt = ngmin.annotate txt
-                    console.log 'uglifying'
-                    options.uglify.fromString = true
-                    result = uglify.minify txt, options.uglify
-                    txt = result.code
-                  console.log 'replaced', len, txt.length
-                   */
+                  if (options.uglify) {
+                    console.log('uglifying');
+                    result = uglify.minify(txt, options.uglify);
+                    txt = result.code;
+                    console.log('replaced', parseInt(txt.length / len * 100) + '%');
+                  }
                   if (placeholder) {
                     $('placeholder').replaceWith($('<script src="app/' + outName + '"></script>'));
                   }
