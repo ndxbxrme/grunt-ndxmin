@@ -1,6 +1,6 @@
 {
   "name": "grunt-ndxmin",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "minification for ndx-framework apps",
   "main": "tasks/ndxmin.js",
   "scripts": {
