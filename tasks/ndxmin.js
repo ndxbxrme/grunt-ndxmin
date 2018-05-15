@@ -110,12 +110,13 @@
                 outName = 'ndx.' + adler32.str(txt).toString().replace('-', 'm') + (block.type === 'script' ? '.js' : '.css');
                 outPath = path.join(destDir, 'app', outName);
                 if (block.type === 'script') {
+                  txt = ngmin.annotate(txt);
                   len = txt.length;
                   txt = txt.replace(/\/\/# sourceMappingURL=.*?\.map/gi, '');
                   console.log('replaced', len, txt.length);
-                  result = {
-                    code: txt
-                  };
+                  result = uglify.minify(txt, {
+                    fromString: true
+                  });
                   if (placeholder) {
                     $('placeholder').replaceWith($('<script src="app/' + outName + '"></script>'));
                   }

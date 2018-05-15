@@ -85,14 +85,14 @@ module.exports = (grunt) ->
               outName = 'ndx.' + adler32.str(txt).toString().replace('-', 'm') + (if block.type is 'script' then '.js' else '.css')
               outPath = path.join destDir, 'app', outName
               if block.type is 'script'
-                #txt = ngmin.annotate txt
+                txt = ngmin.annotate txt
                 len = txt.length
                 txt = txt.replace /\/\/# sourceMappingURL=.*?\.map/gi, ''
                 console.log 'replaced', len, txt.length
-                #result = uglify.minify txt,
-                #  fromString: true
-                result =
-                  code: txt
+                result = uglify.minify txt,
+                  fromString: true
+                #result =
+                #  code: txt
                 if placeholder
                   $('placeholder').replaceWith($('<script src="app/' + outName + '"></script>'))
                 fs.writeFileSync outPath, result.code, 'utf8'
