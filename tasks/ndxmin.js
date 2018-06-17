@@ -83,7 +83,7 @@
               src: src
             });
             next = $(l).next()[0];
-            if (!next || (next && next.name !== 'link')) {
+            if (!next || (next && (next.name !== 'link' || next.attribs['ndx-ignore']))) {
               blocks.push(block);
               block = [];
             }
@@ -125,7 +125,7 @@
                           }
                         ]
                       ],
-                      plugins: ['angularjs-annotate', 'groundskeeper-willie']
+                      plugins: ['angularjs-annotate']
                     });
                     txt = result.code;
                   }

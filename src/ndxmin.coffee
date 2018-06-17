@@ -65,7 +65,7 @@ module.exports = (grunt) ->
             elem: l
             src: src
           next = $(l).next()[0]
-          if not next or (next and next.name isnt 'link')
+          if not next or (next and (next.name isnt 'link' or next.attribs['ndx-ignore']))
             blocks.push block
             block = []
         async.eachSeries blocks, (block, blockCallback) ->
@@ -98,7 +98,7 @@ module.exports = (grunt) ->
                         browsers: ["last 2 versions", "ie >= 7"]
                       modules: false
                     ]]
-                    plugins: ['angularjs-annotate', 'groundskeeper-willie']
+                    plugins: ['angularjs-annotate']
                   txt = result.code
                 if options.uglify
                   console.log 'uglifying'
